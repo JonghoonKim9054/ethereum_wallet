@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<title>Wallet</title>
+
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+
+	<link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png" />
+	<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+
+	<!--     Fonts and icons     -->
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
+
+	<!-- CSS Files -->
+	<link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="assets/css/material-bootstrap-wizard.css" rel="stylesheet" />
+
+	<!-- CSS Just for demo purpose, don't include it in your project -->
+	<link href="assets/css/demo.css" rel="stylesheet" />
+	<script src = "http://code.jquery.com/jquery-1.4.4.min.js"></script>
+	<script>
+		const test = () =>{
+			$.ajax({
+				type:'GET',
+				url: '/api/test',
+				data:{
+					"days" : 1
+				},
+				success : function(result){
+					alert(result);
+				},
+				error : function(error){
+					alert("실패");
+				}
+
+			})
+		}
+
+		const signUp = () =>{ //회원가입
+
+			if($('#signUpPassword1').val() != $('#signUpPassword2').val()){
+				alert('비밀번호가 다릅니다');
+				return false;
+			}
+
+			$.ajax({
+				type: 'POST',
+				url:'/api/newAccount',
+				data:{
+					"email" : $('#signUpEmail').val(),
+					"password" : $('#signUpPassword1').val()
+				},
+				success : function(result){
+					alert(`${result} 계정생성완료`);
+				},
+				error: function(error){
+					alert("실패");
+				}
+			})
+		}
+
+		
+
+		const signIn = () =>{ //로그인
+			$.ajax({
+				type:'POST',
+				url:'/api/signIn',
+				data:{
+					"loginEmail" : $('#loginEmail').val(),
+					"loginPassword" : $('#loginPassword').val()
+				},
+				success : function(result){
+					console.log(result);
+					if(result == "1"){
+						alert("로그인 성공");
+						
+						searchTrans();
+						
+					}else{
+						alert("아이디나 비밀번호를 확인하세요");
+					}				
+				},
+				error : function(error){
+					
+				}
+			})
+		}
+
+		const searchTrans = () =>{  //계좌입력
+			
+			$.ajax({
+				type:'POST',
+				url:'/api/searchTrans',
+				data:{
+					"loginEmail" : $('#loginEmail').val()
+				},
+				success : function(result){ //result는 계좌
+					// document.getElementById('description').focus();
+					$('#myAccount').val(result);
+				},
+				error: function(error){
+					alert("실패");
+				}
+			})
+		}
+
+		const getMyBalance = () =>{
+
+			$.ajax({
+				type:'GET',
+				url:'/api/getBalance',
+				data:{
+					"myAccount" : $('#myAccount').val()
+				},
+				success : function(result){
+					$('#myBalance').val('잔액:  '+ result +' ETH');
+				},
+				error: function(error){
+					alert("실패");
+				}
+			})
+		}
+
+		const sendEther = () =>{
+			$.ajax({
+				type:'GET',
+				url:'/api/sendEther',
+				data:{
+					"myAccount" : $('#myAccount').val(),
+					"sendAccount" : $('#sendAccount').val(),
+					"coinCount" :  $('#coinCount').val(),
+					
+				},
+				success : function(result){
+					alert(JSON.stringify(result));
+				},
+				error: function(error){
+					alert("실패");
+				}
+			})
+		}
+
+		const confirm = () =>{
+			$.ajax({
+				type:'GET',
+				url:'/api/confirmEther',
+				data:{
+					"myAccount" : $('#myAccount').val()
+				},
+				success : function(result){
+					$('#confirmMyBalance').val('잔액:  '+ result +' ETH');
+				},
+				error: function(error){
+					alert("실패");
+				}
+			})
+		}
+
+		const getEther = () =>{
+			$.ajax({
+				type:'GET',
+				url:'/api/getEther',
+				data:{
+					"account" : $('#myAccount').val()
+				},
+				success : function(result){
+					alert(JSON.stringify(result));
+				},
+				error: function(error){
+					alert("실패");
+				}
+			})
+		}
+		
+		
+
+	</script>
+	
+</head>
+
+<body>
+	<div class="image-container set-full-height" style="background-image: url('assets/img/wizard-book.jpg')">
+	    <!--   Creative Tim Branding   -->
+	    <a href="http://decademy.info">
+	         <div class="logo-container">
+	            <div class="logo">
+	                <img src="assets/img/new_logo.png">
+	            </div>
+	            <div class="brand">
+	                Decademy
+	            </div>
+	        </div>
+	    </a>
+
+	    <!--   Big container   -->
+	    <div class="container">
+	        <div class="row">
+		        <div class="col-sm-8 col-sm-offset-2">
+		            <!--      Wizard container        -->
+		            <div class="wizard-container">
+		                <div class="card wizard-card" data-color="orange" id="wizard">
+		                <!--        You can switch " data-color="blue" "  with one of the next bright colors: "green", "orange", "red", "purple"             -->
+
+							<div class="wizard-header">
+								<h3 class="wizard-title">
+									Ethereum Wallet
+								</h3>
+								<h5>Made by Jonghoon Kim</h5>
+							</div>
+							<div class="wizard-navigation">
+								<ul>
+									<li><a href="#details" data-toggle="tab">계정생성</a></li>
+									<li><a href="#login" data-toggle="tab">로그인</a></li>
+									<li><a href="#description" data-toggle="tab">조회/전송</a></li>
+								</ul>
+							</div>
+
+							<div class="tab-content">
+								<div class="tab-pane" id="details">
+									<div class="row">
+										<div class="col-sm-12">
+											<h4 class="info-text"> 계정을 만드세요</h4>
+										</div>
+										<div class="col-sm-6">
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">email</i>
+												</span>
+												<div class="form-group label-floating">
+													<label class="control-label">Your Email</label>
+													<input name="name" type="text" class="form-control" id="signUpEmail">
+												</div>
+											</div>
+
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">lock_outline</i>
+												</span>
+												<div class="form-group label-floating">
+													<label class="control-label">Your Password</label>
+													<input name="name2" type="password" class="form-control" id='signUpPassword1'>
+												</div>
+											</div>
+
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">lock_outline</i>
+												</span>
+												<div class="form-group label-floating">
+													<label class="control-label">Confirm Password</label>
+													<input name="name2" type="password" class="form-control" id='signUpPassword2'>
+												</div>
+											</div>
+
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group label-floating">
+												<button class="btn btn-success" onclick="signUp()">가입하기</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								<div class="tab-pane" id="login">
+									<div class="row">
+										<div class="col-sm-12">
+											<h4 class="info-text"> 로그인 하세요 </h4>
+										</div>
+										<div class="col-sm-6">
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">email</i>
+												</span>
+												<div class="form-group label-floating">
+													<label class="control-label">Your Email</label>
+													<input name="name" type="text" class="form-control" id="loginEmail">
+												</div>
+											</div>
+
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">lock_outline</i>
+												</span>
+												<div class="form-group label-floating">
+													<label class="control-label">Your Password</label>
+													<input name="name2" type="password" class="form-control" id="loginPassword">
+												</div>
+											</div>
+
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group label-floating">
+												<button class="btn btn-success" onclick="signIn();">Login</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								<div class="tab-pane" id="description">
+									<div class="row">
+										<h4 class="info-text"> ETH 보내기</h4>
+										<div class="col-sm-6">
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">account_circle</i>
+												</span>
+												<div class="form-group label-floating">
+													<!-- <label class="control-label">Your Account</label> -->
+													<input name="name" type="text" class="form-control" value="계정을 만들어주세요" id="myAccount" readonly>
+													<input name="balace" type="text" class="form-control" value="" id="myBalance" readonly>
+												</div>
+											</div>
+
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">account_circle</i>
+												</span>
+												<div class="form-group label-floating">
+													<label class="control-label">출금 주소 (받는 사람)</label>
+													<input name="sendAccount" type="text" class="form-control" id="sendAccount">
+												</div>
+											</div>
+
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">attach_money</i>
+												</span>
+												<div class="form-group label-floating">
+													<label class="control-label">출금 수량 (ETH)</label>
+													<input name="coinCount" type="text" class="form-control" id="coinCount">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group label-floating">
+												<button class="btn btn-success btn-sm" onclick="getMyBalance()">잔액조회</button>
+												<button class="btn btn-danger btn-sm" onclick="getEther()">이더받기</button>
+											</div>
+											<div class="form-group label-floating">
+													<button class="btn btn-info btn-sm" onclick="sendEther()">전송하기</button>
+											</div>
+											<div class="form-group label-floating">
+													<button class="btn btn-warning btn-sm" onclick="confirm()">출금확인</button>
+													<input name="confirmBalace" type="text" class="form-control" value="" id="confirmMyBalance" readonly>
+											</div>
+												
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="wizard-footer">
+								<div class="clearfix"></div>
+							</div>
+		                </div>
+		            </div> <!-- wizard container -->
+		        </div>
+	    	</div> <!-- row -->
+		</div> <!--  big container -->
+
+	    <!-- <div class="footer">
+	        <div class="container text-center">
+	             Made with <i class="fa fa-heart heart"></i> by <a href="http://www.creative-tim.com">Creative Tim</a>. Free download <a href="http://www.creative-tim.com/product/material-bootstrap-wizard">here.</a>
+	        </div>
+	    </div> -->
+	</div>
+
+</body>
+	<!--   Core JS Files   -->
+	<script src="assets/js/jquery-2.2.4.min.js" type="text/javascript"></script>
+	<script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
+	<script src="assets/js/jquery.bootstrap.js" type="text/javascript"></script>
+
+	<!--  Plugin for the Wizard -->
+	<script src="assets/js/material-bootstrap-wizard.js"></script>
+
+	<!--  More information about jquery.validate here: http://jqueryvalidation.org/	 -->
+	<script src="assets/js/jquery.validate.min.js"></script>
+</html>
